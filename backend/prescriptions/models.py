@@ -3,21 +3,21 @@ from django.db import models
 class Prescription(models.Model):
     patient_id = models.BigIntegerField()
     doctor_id = models.BigIntegerField()
-    prescription_desc = models.CharField()
-    hash_id = models.CharField()
+    prescription_desc = models.TextField()
+    hash_id = models.CharField(max_length=255)
 
 
 class PatientInformation(models.Model):
-    patient_name = models.CharField()
-    patient_dob = models.DateTimeField('Date of Birth')
-    patient_height = models.BigIntegerField()
-    patient_weight = models.BigIntegerField()
-    patient_history = models.CharField()
-    patient_allergies = models.CharField()
+    name = models.TextField()
+    dob = models.DateField('Date of Birth')
+    height = models.BigIntegerField()
+    weight = models.BigIntegerField()
+    history = models.TextField()
+    allergies = models.TextField()
     patient_id = models.BigIntegerField()
 
 class DoctorInformation(models.Model):
-    doctor_name = models.CharField()
-    doctor_hospital_name = models.CharField()
+    name = models.TextField()
+    hospital_name = models.TextField()
     doctor_id = models.BigIntegerField()
 
