@@ -17,6 +17,7 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
 from prescriptions import views
+from prescriptions.views import index
 
 router = routers.DefaultRouter()
 router.register(r'prescriptions', views.PrescriptionView, 'prescription')
@@ -25,5 +26,7 @@ router.register(r'doctors', views.DoctorView, 'doctor')
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("api/", include(router.urls))
+    path("api/", include(router.urls)),
+    path("", include("django_nextjs.urls")),
+    path("", index, name="index")
 ]
