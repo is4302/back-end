@@ -1,18 +1,22 @@
 from rest_framework import serializers
-from .models import Prescription, PatientInformation, DoctorInformation
-
-class PrescriptionSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Prescription
-        fields = ('id', 'patient_id', 'doctor_id', 'prescription_desc', 'hash_id')
+from .models import Prescription, PatientInformation, DoctorInformation, Appointment
 
 class PatientSerializer(serializers.ModelSerializer):
     class Meta:
         model = PatientInformation
-        fields = ('id', 'name', 'dob', 'height', 'weight', 'history', 'allergies', 'patient_id')
+        exclude = ['user']
 
 class DoctorSerializer(serializers.ModelSerializer):
     class Meta:
         model = DoctorInformation
-        fields = ('id', 'name', 'hospital_name', 'doctor_id')
+        exclude = ['user']
+
+class PrescriptionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Prescription
+        fields = '__all__'
+
+class AppointmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Appointment
+        fields = '__all__'
