@@ -40,8 +40,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     'prescriptions',
     'corsheaders',
-    'rest_framework',
-    'users'
+    'rest_framework'
 ]
 
 MIDDLEWARE = [
@@ -142,7 +141,7 @@ CORS_ORIGIN_WHITELIST = [
     'http://localhost:3000'
 ]
 
-AUTH_USER_MODEL = 'users.User'
+AUTH_USER_MODEL = 'prescriptions.User'
 
 CORS_ORIGIN_ALLOW_ALL = True
-CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_CREDENTIALS = True   

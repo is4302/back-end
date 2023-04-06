@@ -4,12 +4,12 @@ from .models import Prescription, PatientInformation, DoctorInformation, Appoint
 class PatientSerializer(serializers.ModelSerializer):
     class Meta:
         model = PatientInformation
-        exclude = ['user']
+        fields = '__all__'
 
 class DoctorSerializer(serializers.ModelSerializer):
     class Meta:
         model = DoctorInformation
-        exclude = ['user']
+        fields = '__all__'
 
 class PrescriptionSerializer(serializers.ModelSerializer):
     class Meta:

@@ -4,10 +4,6 @@ from .serializers import PrescriptionSerializer, PatientSerializer, DoctorSerial
 from .models import Prescription, PatientInformation, DoctorInformation, Appointment
 # Create your views here.
 
-class PrescriptionView(viewsets.ModelViewSet):
-    serializer_class = PrescriptionSerializer
-    queryset = Prescription.objects.all()
-
 class PatientView(viewsets.ModelViewSet):
     serializer_class = PatientSerializer
     queryset = PatientInformation.objects.all()
@@ -15,6 +11,10 @@ class PatientView(viewsets.ModelViewSet):
 class DoctorView(viewsets.ModelViewSet):
     serializer_class = DoctorSerializer
     queryset = DoctorInformation.objects.all()
+
+class PrescriptionView(viewsets.ModelViewSet):
+    serializer_class = PrescriptionSerializer
+    queryset = Prescription.objects.all()
 
 class AppointmentView(viewsets.ModelViewSet):
     serializer_class = AppointmentSerializer
