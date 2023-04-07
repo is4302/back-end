@@ -26,5 +26,6 @@ router.register(r'appointments', views.AppointmentView, 'appt')
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("api/", include(router.urls))
-]
+    path("api/", include(router.urls)),
+    path("wel/", views.PrescriptionView.as_view({'get': 'list', 'post':'list'}))]
+

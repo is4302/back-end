@@ -141,6 +141,8 @@ CORS_ORIGIN_WHITELIST = [
     'http://localhost:3000'
 ]
 
+REST_FRAMEWORK = {'DEFAULT_PERMISSION_CLASSES':['rest_framework.permissions.AllowAny']}
+
 AUTH_USER_MODEL = 'prescriptions.User'
 
 CORS_ORIGIN_ALLOW_ALL = True

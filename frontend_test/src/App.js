@@ -1,103 +1,173 @@
-import logo from './logo.svg';
-import React, { Component } from "react";
-import './App.css';
+import React from 'react'; 
+import axios from 'axios';
 
-class App extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      viewCompleted: false,
-	  prescriptionList: []
-    };
-  }
+class App extends React.Component { 
+	state = {
+		details: [],
+	}
+	
+	componentDidMount() {
+		let data;
+		
+		axios.get('http://localhost:8000/wel/').then(res => {
+			data = res.data;
+			this.setState({
+				details:data
+			})
+		})
+		.catch((err) => {
+			console.log(err)
+		})
+	}
 
-  displayCompleted = (status) => { 
-	if (status) {
-      return this.setState({ viewCompleted: true });
-    }
+	handleInput = (e) => {
+		this.setState({
+			[e.target.treatment]: e.target.value,
+		})
+	}
 
-    return this.setState({ viewCompleted: false });
-  };
+	handleSubmit = (e) => {
+		e.preventDefault();
+		
+		axios.post("http://localhost:8000/wel/", {
+			date: this.state.day,
+			patient: this.state.patient,
+			doctor: this.state.doctor,
+			diagnosis: this.state.diagnosis,
+			treatment: this.state.treatment,
+			rand_id: this.state.rand_id
+		}).then((res) => {
+			this.setState({
+				day: "",
+				patient: "",
+				doctor: "",
+				diagnosis: "",
+				treatment: "",
+				rand_id: ""
+			})
+		}).catch((err) => {
+			console.log(err.response)
+		})
+	}
 
-  renderTabList = () => {
-    return (
-      <div className="nav nav-tabs">
-        <span
-          className={this.state.viewCompleted ? "nav-link active" : "nav-link"}
-          onClick={() => this.displayCompleted(true)}
-        >
-          Complete
-        </span>
-        <span
-          className={this.state.viewCompleted ? "nav-link" : "nav-link active"}
-          onClick={() => this.displayCompleted(false)}
-        >
-          Incomplete
-        </span>
-      </div>
-    );
-  };
+    render() { 
+        return(
+            <div className="container jumbotron ">
+				<form onSubmit={this.handleSubmit}>
+					<div className="input-group mb-3">
+                        <div className="input-group-prepend">
+                            <span className="input-group-text"
+                                  id="basic-addon1">
+                                {" "}
+                                Today's Date{" "}
+                            </span>
+                        </div>
+                        <input type="date" className="form-control" 
+                               placeholder="Date of Prescription"
+                               aria-label="Date"
+                               aria-describedby="basic-addon1"
+                               value={this.state.day} name="day"
+                               onChange={this.handleInput} />
+                    </div>
+					<div className="input-group mb-3">
+                        <div className="input-group-prepend">
+                            <span className="input-group-text">
+                               PatientId 
+                            </span>
+                        </div>
+                        <textarea className="form-control " 
+                                  aria-label="With textarea"
+                                  placeholder="Patient Wallet" 
+                                  value={this.state.patient} name="quote" 
+                                  onChange={this.handleInput}>
+                        </textarea>
+                    </div>
+					<div className="input-group mb-3">
+                        <div className="input-group-prepend">
+                            <span className="input-group-text">
+                               Diagnosis
+                            </span>
+                        </div>
+                        <textarea className="form-control " 
+                                  aria-label="With textarea"
+                                  placeholder="Diagnosis" 
+                                  value={this.state.diagnosis} name="quote" 
+                                  onChange={this.handleInput}>
+                        </textarea>
+                    </div>
+					<div className="input-group mb-3">
+                        <div className="input-group-prepend">
+                            <span className="input-group-text">
+                               Treatment
+                            </span>
+                        </div>
+                        <textarea className="form-control " 
+                                  aria-label="With textarea"
+                                  placeholder="Treatment" 
+                                  value={this.state.treatment} name="quote" 
+                                  onChange={this.handleInput}>
+                        </textarea>
+                    </div>
+					<div className="input-group mb-3">
+                        <div className="input-group-prepend">
+                            <span className="input-group-text">
+                               Rand Id
+                            </span>
+                        </div>
+                        <input type="number" className="form-control" 
+                               placeholder="Random ID"
+                               aria-label="Rand"
+                               aria-describedby="basic-addon1"
+                               value={this.state.rand} name="day"
+                               onChange={this.handleInput} />
+                    </div>
+					<div className="input-group mb-3">
+                        <div className="input-group-prepend">
+                            <span className="input-group-text">
+                               Doctor Id
+                            </span>
+                        </div>
+                        <textarea className="form-control " 
+                                  aria-label="With textarea"
+                                  placeholder="Doctor Wallet" 
+                                  value={this.state.doctor} name="quote" 
+                                  onChange={this.handleInput}>
+                        </textarea>
+                    </div>
+  
+                    <button type="submit" className="btn btn-primary mb-5">
+                        Submit
+                    </button>
+				</form>
+				<hr
+                    style={{
+                        color: "#000000",
+                        backgroundColor: "#000000",
+                        height: 0.5,
+                        borderColor: "#000000",
+                    }}
+                />
 
-
-  renderItems = () => {
-    const { viewCompleted } = this.state;
-    const newItems = this.state.prescriptionList.filter(
-      (item) => item.completed == viewCompleted
-    );
-
-    return newItems.map((item) => (
-      <li
-        key={item.id}
-        className="list-group-item d-flex justify-content-between align-items-center"
-      >
-        <span
-          className={`todo-title mr-2 ${
-            this.state.viewCompleted ? "completed-todo" : ""
-          }`}
-          title={item.description}
-        >
-          {item.title}
-        </span>
-        <span>
-          <button
-            className="btn btn-secondary mr-2"
-          >
-            Edit
-          </button>
-          <button
-            className="btn btn-danger"
-          >
-            Delete
-          </button>
-        </span>
-      </li>
-    ));
-  };
-
-  render() {
-    return (
-      <main className="container">
-        <h1 className="text-white text-uppercase text-center my-4">Todo app</h1>
-        <div className="row">
-          <div className="col-md-6 col-sm-10 mx-auto p-0">
-            <div className="card p-3">
-              <div className="mb-4">
-                <button
-                  className="btn btn-primary"
-                >
-                  Add task
-                </button>
-              </div>
-              {this.renderTabList()}
-              <ul className="list-group list-group-flush border-top-0">
-                {this.renderItems()}
-              </ul>
-            </div>
-          </div>
-        </div>
-      </main>
-    );
-  }
-}
-
+				{this.state.details.map((detail, id) => (
+                    <div key={id}>
+                        <div className="card shadow-lg">
+                            <div className={"bg-" + this.renderSwitch(id % 6) + 
+                                          " card-header"}>Quote {id + 1}</div>
+                            <div className="card-body">
+                                <blockquote className={"text-" + this.renderSwitch(id % 6) + 
+                                                   " blockquote mb-0"}>
+                                    <h1> {detail.detail} </h1>
+                                    <footer className="blockquote-footer">
+                                        {" "}
+                                        <cite title="Source Title">{detail.name}</cite>
+                                    </footer>
+                                </blockquote>
+                            </div>
+                        </div>
+                        <span className="border border-primary "></span>
+                    </div>
+                ))}
+            </div>);
+    } 
+} 
 export default App;
