@@ -2,19 +2,6 @@ from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 
-class User(AbstractBaseUser, PermissionsMixin):
-    name = models.CharField(max_length=255)
-    email = models.EmailField(max_length=255, unique=True)
-    is_doctor = models.BooleanField(default=False)
-    is_patient = models.BooleanField(default=False)
-    is_active = models.BooleanField(default=True)
-    is_staff = models.BooleanField(default=False)
-    is_superuser = models.BooleanField(default=False)
-    wallet_address = models.CharField(max_length=255, unique=True)
-
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['name', 'wallet_address']
-
 class UserManager(BaseUserManager):
     def create_user(self, name, email, wallet_address, password=None):
         if name is None:
@@ -47,6 +34,24 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
         
+
+class User(AbstractBaseUser, PermissionsMixin):
+    name = models.CharField(max_length=255)
+    email = models.EmailField(max_length=255, unique=True)
+    is_doctor = models.BooleanField(default=False)
+    is_patient = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False)
+    wallet_address = models.CharField(max_length=255, unique=True)
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['name', 'wallet_address']
+
+    objects = UserManager()
+    
+    def __str__(self):
+        return self.email
 
 class PatientInformation(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, default=id, related_name='patient')

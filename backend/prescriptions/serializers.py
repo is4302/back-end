@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from rest_framework_jwt.settings import api_settings
+from django.contrib.auth import authenticate
 from .models import Prescription, PatientInformation, DoctorInformation, Appointment, User
 
 jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
@@ -9,36 +10,6 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['email']
-
-class UserSeralizerToken(serializers.ModelSerializer):
-    token = serializers.SerializerMethodField()
-    password = serializers.CharField(write_only=True)
-    
-    class Meta:
-        model = User
-        fields = ('token', 'email', 'password', 'profile')
-
-    def get_token(self, response): ##use to get user
-        payload = jwt_payload_handler(response)
-        token = jwt_encode_handler(payload) 
-        return token
-    
-    def create(self, data):
-        profile = data.pop('profile')
-        user = User.objects.create_user(**data)
-        PatientInformation.objects.create(
-            user=user,
-            name=profile['name'],
-            dob=profile['dob'],
-            height=profile['height'],
-            weight=profile['weight'],
-            history=profile['history'],
-            allergies=profile['allergies'],
-            patient_wallet=profile['patient_wallet']
-        )
-        user.save()
-        return user
-
 
 class PatientSerializer(serializers.ModelSerializer):
     class Meta:
@@ -50,6 +21,67 @@ class DoctorSerializer(serializers.ModelSerializer):
         model = DoctorInformation
         fields = '__all__'
 
+class PatientRegistrationSerializer(serializers.ModelSerializer):
+    profile = PatientSerializer
+
+    class Meta:
+        model = User
+        fields = ('name', 'email', 'wallet_address', 'password', 'profile')
+
+    def create(self, data):
+        profile = data.pop('profile')
+        user = User.objects.create_patient(**data)
+        PatientInformation.objects.create(
+            user = user,
+            dob = profile['dob'],
+            height = profile['height'],
+            weight = profile['weight'],
+            history = profile['history'],
+            allergies = profile['allergies']
+        )
+        return user
+
+class DoctorRegistrationSerializer(serializers.ModelSerializer):
+    profile = DoctorSerializer
+
+    class Meta:
+        model = User
+        fields = ('name', 'email', 'wallet_address', 'password', 'profile')
+
+    def create(self, data):
+        profile = data.pop('profile')
+        user = User.objects.create_patient(**data)
+        PatientInformation.objects.create(
+            user = user,
+            hospital_name = profile['hospital_name']
+        )
+        return user
+
+class UserSerializer(serializers.ModelSerializer):
+
+    name = serializers.CharField()
+    email = serializers.CharField()
+    wallet = serializers.CharField()
+    password = serializers.CharField(write_only=True)
+    token = serializers.CharField(read_only=True)
+
+    def validate(self, data):
+        email = data.get("email")
+        password = data.get("password")
+        user = authenticate(email=email, password=password)
+
+        if user is None:
+            raise serializers.ValidationError('No email or password matched')
+        
+        try:
+            payload = jwt_payload_handler(user)
+            token = jwt_encode_handler(payload)
+        except User.DoesNotExist:
+            raise serializers.ValidationError("User does not exist")
+        
+        return {'name': user.name, 'email': user.email, 'wallet': user.wallet, 'token': token}
+
+
 class PrescriptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Prescription
@@ -59,24 +91,3 @@ class AppointmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Appointment
         fields = '__all__'
-
-# class DoctorRegistrationSerializer(RegisterSerializer):
-#     account = serializers.PrimaryKeyRelatedField(read_only=True)
-#     hospital_name = serializers.CharField(max_length=255)
-
-#     def get_cleaned_data(self):
-#         data_dict = super().get_cleaned_data()
-#         extra_data = {
-#             'hospital_name': self.validated_data.get('hospital_name', ''),
-            
-#         }
-#         data_dict.update(extra_data)
-#         return data_dict
-
-#     def save(self, request):
-#         user = super(DoctorRegistrationSerializer, self).save(request)
-#         user.is_doctor = True
-#         user.save()
-#         doctor_profile = DoctorInformation(user=user, hospital_name=self.validated_data.get('hospital_name', ''))
-#         doctor_profile.save()
-#         return user

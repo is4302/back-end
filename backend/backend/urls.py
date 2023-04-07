@@ -17,17 +17,17 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
 from prescriptions import views
-from prescriptions.views import RegisterView
+from prescriptions.views import *
 
 router = routers.DefaultRouter()
 router.register(r'prescriptions', views.PrescriptionView, 'prescription')
-router.register(r'patients', views.PatientView, 'patient')
-router.register(r'doctors', views.DoctorView, 'doctor')
 router.register(r'appointments', views.AppointmentView, 'appt')
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/", include(router.urls)),
-    path("wel/", views.PrescriptionView.as_view({'get': 'list', 'post':'list'})),
-    path('register', RegisterView.as_view(), name='api-register')]
+    path("api/signup/patient", PatientRegistrationView.as_view(), name='patient_signup'),
+    path("api/signup/doctor", DoctorRegistrationView.as_view(), name='doctor_signup'),
+    path("api/login", UserView.as_view()),
+    path("api/profile", ProfileView.as_view())]
 

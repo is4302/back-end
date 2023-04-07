@@ -29,8 +29,19 @@ class PrescriptionAdmin(admin.ModelAdmin):
 class ApptAdmin(admin.ModelAdmin):
     list_display = ('appointment_time', 'patient', 'doctor')
 
-class UserAdmin(UserAdmin):
+class CustomUserAdmin(UserAdmin):
     list_display = ('name', 'email', 'wallet_address', 'is_patient', 'is_doctor', 'is_superuser', 'is_staff')
+    add_fieldsets = [
+        (None, {
+            'classes': ('wide',),
+            'fields': ['name', 'email', 'wallet_address', 'is_patient', 'is_doctor', 'is_superuser', 'is_staff']
+        },),
+    ]
+    fieldsets = [
+        (None, {
+            'fields': ['name', 'email', 'wallet_address', 'is_patient', 'is_doctor', 'is_superuser', 'is_staff']
+        },),
+    ]
     ordering = ('name',)
 
 
@@ -40,4 +51,4 @@ admin.site.register(Prescription, PrescriptionAdmin)
 admin.site.register(PatientInformation, PatientAdmin)
 admin.site.register(DoctorInformation, DoctorAdmin)
 admin.site.register(Appointment, ApptAdmin)
-admin.site.register(User, UserAdmin)
+admin.site.register(User, CustomUserAdmin)
