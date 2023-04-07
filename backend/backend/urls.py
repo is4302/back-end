@@ -17,6 +17,7 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
 from prescriptions import views
+from prescriptions.views import RegisterView
 
 router = routers.DefaultRouter()
 router.register(r'prescriptions', views.PrescriptionView, 'prescription')
@@ -27,5 +28,6 @@ router.register(r'appointments', views.AppointmentView, 'appt')
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/", include(router.urls)),
-    path("wel/", views.PrescriptionView.as_view({'get': 'list', 'post':'list'}))]
+    path("wel/", views.PrescriptionView.as_view({'get': 'list', 'post':'list'})),
+    path('register', RegisterView.as_view(), name='api-register')]
 
