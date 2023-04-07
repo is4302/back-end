@@ -42,10 +42,8 @@ class UserView(RetrieveAPIView):
 
     def get(self,request):
         serializer = self.serializer_class(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-        
-        response = {'success': 'True', 'message': 'User logged in', 'token':serializer.data['token']}
+        serializer.is_valid(raise_exception=True)
+        response = {'success': 'True', 'message': 'User logged in', 'token': serializer.data['token']}
         return Response(response, status=status.HTTP_200_OK)
 
 

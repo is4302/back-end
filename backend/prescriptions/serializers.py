@@ -59,11 +59,15 @@ class DoctorRegistrationSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
 
+    class Meta:
+        model = User
+        fields = ('name', 'email', 'wallet_address', 'password', 'token')
+
     name = serializers.CharField()
     email = serializers.CharField()
-    wallet = serializers.CharField()
+    wallet_address = serializers.CharField()
     password = serializers.CharField(write_only=True)
-    token = serializers.CharField(read_only=True)
+    token = serializers.CharField()
 
     def validate(self, data):
         email = data.get("email")
@@ -79,7 +83,8 @@ class UserSerializer(serializers.ModelSerializer):
         except User.DoesNotExist:
             raise serializers.ValidationError("User does not exist")
         
-        return {'name': user.name, 'email': user.email, 'wallet': user.wallet, 'token': token}
+        return {'name': user.name, 'email': user.email, 'wallet': user.wallet_address, 'token': token}
+
 
 
 class PrescriptionSerializer(serializers.ModelSerializer):

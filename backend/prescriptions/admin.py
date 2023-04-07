@@ -3,26 +3,11 @@ from django.contrib.auth.admin import UserAdmin
 from .models import Prescription, PatientInformation, DoctorInformation, Appointment, User
 
 class PatientAdmin(admin.ModelAdmin):
-    list_display = ('name', 'email', 'wallet_address', 'dob', 'height', 'weight', 'history', 'allergies')
-
-    def name(self, obj):
-        return obj.user.name
-    def email(self, obj):
-        return obj.user.email
-    def wallet_address(self, obj):
-        return obj.user.wallet_address
+    list_display = ('dob', 'height', 'weight', 'history', 'allergies')
     
-
 class DoctorAdmin(admin.ModelAdmin):
-    list_display = ('name', 'email', 'wallet_address', 'hospital_name')
+    list_display = ('hospital_name',)
     
-    def name(self, obj):
-        return obj.user.name
-    def email(self, obj):
-        return obj.user.email
-    def wallet_address(self, obj):
-        return obj.user.wallet_address
-
 class PrescriptionAdmin(admin.ModelAdmin):
     list_display = ('rand_id', 'date', 'diagnosis', 'treatment', 'patient', 'doctor')
 
