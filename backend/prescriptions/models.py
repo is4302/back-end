@@ -1,3 +1,4 @@
+import uuid
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
@@ -36,6 +37,7 @@ class UserManager(BaseUserManager):
         
 
 class User(AbstractBaseUser, PermissionsMixin):
+    id = models.UUID(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=255)
     email = models.EmailField(max_length=255, unique=True)
     is_doctor = models.BooleanField(default=False)
