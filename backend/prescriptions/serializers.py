@@ -22,7 +22,7 @@ class DoctorSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class PatientRegistrationSerializer(serializers.ModelSerializer):
-    profile = PatientSerializer
+    profile = PatientSerializer(required=False)
 
     class Meta:
         model = User
@@ -42,7 +42,7 @@ class PatientRegistrationSerializer(serializers.ModelSerializer):
         return user
 
 class DoctorRegistrationSerializer(serializers.ModelSerializer):
-    profile = DoctorSerializer
+    profile = DoctorSerializer(required=False)
 
     class Meta:
         model = User
