@@ -19,6 +19,7 @@ class PatientRegistrationView(CreateAPIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
+
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             serializer.save()
