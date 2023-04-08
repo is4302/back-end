@@ -56,6 +56,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.email
 
 class PatientInformation(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.OneToOneField(User, on_delete=models.CASCADE, default=id, related_name='patient')
     # name = models.TextField()
     dob = models.DateField('Date of Birth')
@@ -69,6 +70,7 @@ class PatientInformation(models.Model):
         return self.patient_wallet
 
 class DoctorInformation(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.OneToOneField(User, on_delete=models.CASCADE, default=id, related_name='doctor')
     # name = models.TextField()
     hospital_name = models.TextField()

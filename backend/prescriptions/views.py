@@ -50,14 +50,11 @@ class UserLoginView(RetrieveAPIView):
             'success' : 'True',
             'status code' : status.HTTP_200_OK,
             'message': 'User logged in  successfully',
-            'token' : serializer.data['token'],
+            'token' : serializer.data['token']
             }
         status_code = status.HTTP_200_OK
 
         return Response(response, status=status_code)
-
-
-
 
 class ProfileView(RetrieveAPIView):
     permission_classes = (IsAuthenticated, )
