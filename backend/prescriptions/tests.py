@@ -2,18 +2,6 @@ from django.test import TestCase
 from prescriptions.models import User
 import json
 
-test_users = [
-    {"username": "testuser1", "password": "testpassword1"},
-    {"username": "testuser2", "password": "testpassword2"},
-]
-
-class LoginTest(TestCase):
-    def setUp(self):
-        for user in test_users:
-            new_user = User.objects.create(username=user["username"])
-            new_user.set_password(user["password"])
-            new_user.save()
-
 class AccountTest(TestCase):
     def setUp(self):
         self.user = User.objects.create_patient(

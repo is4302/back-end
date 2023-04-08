@@ -29,15 +29,15 @@ class PatientRegistrationSerializer(serializers.ModelSerializer):
         fields = ('name', 'email', 'wallet_address', 'password', 'profile')
 
     def create(self, data):
-        profile = data.pop('profile')
+        profile_data = data.pop('profile')
         user = User.objects.create_patient(**data)
-        PatientInformation.objects.create(
+        PatientInformation.objects.create_patient(
             user = user,
-            dob = profile['dob'],
-            height = profile['height'],
-            weight = profile['weight'],
-            history = profile['history'],
-            allergies = profile['allergies']
+            dob = profile_data['dob'],
+            height = profile_data['height'],
+            weight = profile_data['weight'],
+            history = profile_data['history'],
+            allergies = profile_data['allergies']
         )
         return user
 
@@ -49,11 +49,11 @@ class DoctorRegistrationSerializer(serializers.ModelSerializer):
         fields = ('name', 'email', 'wallet_address', 'password', 'profile')
 
     def create(self, data):
-        profile = data.pop('profile')
-        user = User.objects.create_patient(**data)
-        PatientInformation.objects.create(
+        profile_data = data.pop('profile')
+        user = User.objects.create_doctor(**data)
+        DoctorInformation.create(
             user = user,
-            hospital_name = profile['hospital_name']
+            hospital_name = profile_data['hospital_name']
         )
         return user
 

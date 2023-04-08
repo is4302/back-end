@@ -16,17 +16,19 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
     
-    def create_doctor(self, name, email, wallet_address, hospital_name, password=None):
+    def create_doctor(self, name, email, wallet_address, password=None):
         user = self.create_user(name, email, wallet_address, password)
         user.is_doctor = True
-        doctor_profile = DoctorInformation(user=user, hospital_name=hospital_name)
-        doctor_profile.save(using=self._db)
+        user.save(using=self._db)
+        #doctor_profile = DoctorInformation(user=user, hospital_name=hospital_name)
+        #doctor_profile.save(using=self._db)
     
-    def create_patient(self, name, email, wallet_address, dob, height, weight, history, allergies, password=None):
+    def create_patient(self, name, email, wallet_address, password=None):
         user = self.create_user(name, email, wallet_address, password)
         user.is_patient = True
-        patient_profile = PatientInformation(user=user, dob=dob, height=height, weight=weight, history=history, allergies=allergies)
-        patient_profile.save(using=self._db)
+        user.save(using=self._db)
+        #patient_profile = PatientInformation(user=user, dob=dob, height=height, weight=weight, history=history, allergies=allergies)
+        #patient_profile.save(using=self._db)
     
     def create_superuser(self, name, email, wallet_address, password=None):
         user = self.create_user(name, email, wallet_address, password)
@@ -54,6 +56,11 @@ class User(AbstractBaseUser, PermissionsMixin):
     
     def __str__(self):
         return self.email
+    
+class PatientManager(models.Manager):
+    def create_patient(self, user, dob, height, weight, history, allergies):
+        patient = self.model(user=user, dob=dob, height=height, weight=weight, history=history, allergies=allergies)
+        patient.save(using=self._db)
 
 class PatientInformation(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -65,9 +72,14 @@ class PatientInformation(models.Model):
     history = models.JSONField()
     allergies = models.TextField()
     # patient_wallet = models.CharField(max_length=255)
+
+    objects = PatientManager()
     
     def __str__(self):
         return self.patient_wallet
+    
+
+
 
 class DoctorInformation(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -78,6 +90,12 @@ class DoctorInformation(models.Model):
 
     def __str__(self):
         return self.doctor_wallet
+
+    @classmethod
+    def create(cls, user, hospital_name):
+        doctor = cls(user=user, hospital_name=hospital_name)
+        doctor.save(force_insert=True)
+        return doctor
 
 class Prescription(models.Model):
     date =  models.DateField('Date of Prescription')
