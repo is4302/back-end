@@ -65,9 +65,9 @@ class UserLoginSerializer(serializers.Serializer):
 
     # name = serializers.CharField()
     email = serializers.CharField()
-    wallet_address = serializers.CharField()
+    # wallet_address = serializers.CharField()
     password = serializers.CharField(write_only=True)
-    token = serializers.CharField()
+    # token = serializers.CharField()
 
     def validate(self, data):
         email = data.get("email")

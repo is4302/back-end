@@ -1,15 +1,16 @@
 from django.shortcuts import render
 from rest_framework import viewsets, status
+from rest_framework.views import APIView
 from rest_framework.generics import CreateAPIView, RetrieveAPIView
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from .serializers import PrescriptionSerializer, PatientSerializer, DoctorSerializer, AppointmentSerializer, PatientRegistrationSerializer, DoctorRegistrationSerializer, UserLoginSerializer
-from .models import Prescription, PatientInformation, DoctorInformation, Appointment
-from django.contrib.auth import get_user_model
+from .models import Prescription, PatientInformation, DoctorInformation, Appointment, User
+# from django.contrib.auth import get_user_model
 from rest_framework.permissions import AllowAny
-User = get_user_model()
+# User = get_user_model()
 # Create your views here.
 
 
@@ -38,10 +39,11 @@ class DoctorRegistrationView(CreateAPIView):
         return Response(response, status=status.HTTP_201_CREATED)
 
 
-class UserLoginView(RetrieveAPIView):
+class UserLoginView(APIView):
     serializer_class = UserLoginSerializer
     permission_classes = (AllowAny,)
-    queryset = ''
+    queryset = User.objects.none()
+
 
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
@@ -60,13 +62,22 @@ class UserLoginView(RetrieveAPIView):
 
 
 class ProfileView(RetrieveAPIView):
-    permission_classes = (IsAuthenticated, )
+    permission_classes = (AllowAny, )
     authentication_classes = (TokenAuthentication, )
+    # queryset = User.objects.all()
+
+    # def get_object(self):
+    #     queryset = self.filter_queryset(self.get_queryset())
+    #     obj = queryset.get(pk=self.request.user.id)
+    #     self.check_object_permissions(self.request, obj)
+    #     return obj
 
     def get(self, request):
+
         try:
             if request.user.is_patient:
-                username = User.objects.get(user=request.user)
+                user = User.objects.get(user=request.user)
+                # username = PatientInformation.objects.get(user=request.user)
                 status_code = status.HTTP_200_OK
                 profile = PatientInformation.objects.get(user=request.user)
                 response = {
@@ -74,13 +85,13 @@ class ProfileView(RetrieveAPIView):
                     'status': status.HTTP_200_OK,
                     'message': 'Patient Information successfully retrieved',
                     'data': [{
-                        'name': username.name,
+                        'name': user.name,
                         'dob': profile.dob,
                         'height':profile.height,
                         'weight':profile.weight,
                         'history':profile.history,
                         'allergies': profile.allergies,
-                        'wallet': username.wallet
+                        'wallet': user.wallet_address
                     }]
                 }
             if request.user.is_doctor:
@@ -94,7 +105,7 @@ class ProfileView(RetrieveAPIView):
                     'data': [{
                         'name': username.name,
                         'hospital':profile.hospital_name,
-                        'wallet': username.wallet
+                        'wallet': username.wallet_address
                     }]
                 }
             if request.user.is_superuser:
@@ -106,8 +117,8 @@ class ProfileView(RetrieveAPIView):
                     'message': 'Admin Profile retrieved',
                     'data': [{
                         'name': profile.name,
-                        'email':profile.hospital_name,
-                        'wallet': profile.wallet
+                        'email':profile.email,
+                        'wallet': profile.wallet_address
                     }]
                 }
         except Exception as e:
