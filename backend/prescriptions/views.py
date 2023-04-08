@@ -17,6 +17,7 @@ from rest_framework.permissions import AllowAny
 class PatientRegistrationView(CreateAPIView):
 
     serializer_class = PatientRegistrationSerializer
+    permission_classes = [AllowAny]
     
     def post(self,request):
         serializer = self.serializer_class(data=request.data)
@@ -29,6 +30,7 @@ class PatientRegistrationView(CreateAPIView):
 
 class DoctorRegistrationView(CreateAPIView):
     serializer_class = DoctorRegistrationSerializer
+    permission_classes = [AllowAny]
     
     def post(self,request):
         serializer = self.serializer_class(data=request.data)
