@@ -59,15 +59,8 @@ class UserLoginView(APIView):
         return Response(response, status=status_code)
 
 class ProfileView(RetrieveAPIView):
-    permission_classes = (AllowAny, )
+    permission_classes = (IsAuthenticated, )
     authentication_classes = (TokenAuthentication, )
-    # queryset = User.objects.all()
-
-    # def get_object(self):
-    #     queryset = self.filter_queryset(self.get_queryset())
-    #     obj = queryset.get(pk=self.request.user.id)
-    #     self.check_object_permissions(self.request, obj)
-    #     return obj
 
     def get(self, request):
 

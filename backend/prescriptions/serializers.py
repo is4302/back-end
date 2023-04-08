@@ -59,15 +59,10 @@ class DoctorRegistrationSerializer(serializers.ModelSerializer):
 
 class UserLoginSerializer(serializers.Serializer):
 
-    # class Meta:
-    #     model = User
-    #     fields = ('name', 'email', 'wallet_address', 'password', 'token')
-
-    # name = serializers.CharField()
     email = serializers.CharField()
-    # wallet_address = serializers.CharField()
     password = serializers.CharField(write_only=True)
-    # token = serializers.CharField()
+    token = serializers.CharField(allow_blank=True, read_only=True)
+
 
     def validate(self, data):
         email = data.get("email")
