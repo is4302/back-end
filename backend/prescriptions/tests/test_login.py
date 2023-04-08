@@ -5,12 +5,12 @@ from prescriptions.models import PatientInformation, DoctorInformation, User
 class AccountTest(TestCase):
     def setUp(self):
         self.user = User.objects.create_patient(
-            email="demo@example.com"
+            email="demo@example.com",
             password="12345"
         )
 
         self.user_2 = User.objects.create_doctor(
-            email="abcd@g.com"
+            email="abcd@g.com",
             password="1234"
         )
     
