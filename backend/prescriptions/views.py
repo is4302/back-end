@@ -5,9 +5,10 @@ from rest_framework.decorators import api_view, authentication_classes, permissi
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
-from .serializers import PrescriptionSerializer, PatientSerializer, DoctorSerializer, AppointmentSerializer, PatientRegistrationSerializer, DoctorRegistrationSerializer, UserSerializer
+from .serializers import PrescriptionSerializer, PatientSerializer, DoctorSerializer, AppointmentSerializer, PatientRegistrationSerializer, DoctorRegistrationSerializer, UserLoginSerializer
 from .models import Prescription, PatientInformation, DoctorInformation, Appointment
 from django.contrib.auth import get_user_model
+from rest_framework.permissions import AllowAny
 User = get_user_model()
 # Create your views here.
 
@@ -37,19 +38,30 @@ class DoctorRegistrationView(CreateAPIView):
         return Response(response, status=status.HTTP_201_CREATED)
 
 
-class UserView(RetrieveAPIView):
-    serializer_class = UserSerializer
+class UserLoginView(RetrieveAPIView):
+    serializer_class = UserLoginSerializer
+    permission_classes = (AllowAny,)
+    queryset = ''
 
-    def get(self,request):
+    def post(self, request):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
-        response = {'success': 'True', 'message': 'User logged in', 'token': serializer.data['token']}
-        return Response(response, status=status.HTTP_200_OK)
+        response = {
+            'success' : 'True',
+            'status code' : status.HTTP_200_OK,
+            'message': 'User logged in  successfully',
+            'token' : serializer.data['token'],
+            }
+        status_code = status.HTTP_200_OK
+
+        return Response(response, status=status_code)
+
+
 
 
 class ProfileView(RetrieveAPIView):
-    permission_classes = (IsAuthenticated)
-    authentication_classes = TokenAuthentication
+    permission_classes = (IsAuthenticated, )
+    authentication_classes = (TokenAuthentication, )
 
     def get(self, request):
         try:

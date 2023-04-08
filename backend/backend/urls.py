@@ -28,7 +28,7 @@ urlpatterns = [
     path("api/", include(router.urls)),
     path("api/signup/patient", PatientRegistrationView.as_view(), name='patient_signup'),
     path("api/signup/doctor", DoctorRegistrationView.as_view(), name='doctor_signup'),
-    path("api/login", UserView.as_view()),
+    path("api/login", UserLoginView.as_view()),
     path("api/profile", ProfileView.as_view()),
 ]
 

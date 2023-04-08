@@ -57,13 +57,13 @@ class DoctorRegistrationSerializer(serializers.ModelSerializer):
         )
         return user
 
-class UserSerializer(serializers.ModelSerializer):
+class UserLoginSerializer(serializers.Serializer):
 
-    class Meta:
-        model = User
-        fields = ('name', 'email', 'wallet_address', 'password', 'token')
+    # class Meta:
+    #     model = User
+    #     fields = ('name', 'email', 'wallet_address', 'password', 'token')
 
-    name = serializers.CharField()
+    # name = serializers.CharField()
     email = serializers.CharField()
     wallet_address = serializers.CharField()
     password = serializers.CharField(write_only=True)
