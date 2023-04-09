@@ -11,12 +11,10 @@ class UserManager(BaseUserManager):
             raise TypeError('Users must have an email')
         if wallet_address is None:
             raise TypeError('Users must have a wallet address')
-        user = self.model(name=name, email=self.normalize_email(email), wallet_address=wallet_address)
+        user = self.model(name=name, email=self.normalize_email(email).lower(), wallet_address=wallet_address)
         user.set_password(password)
         user.save(using=self._db)
-        return user
-    
-
+        return user    
 
     def create_doctor(self, email, name, wallet_address, password=None, **extra_fields):
         user = self.create_user(email=email, name=name, wallet_address=wallet_address, password=password, **extra_fields)
@@ -24,7 +22,6 @@ class UserManager(BaseUserManager):
         user.is_active = True
         user.save()
         return user
-
 
     def create_patient(self, name, email, wallet_address, password=None):
         user = self.create_user(name, email, wallet_address, password)
@@ -59,46 +56,31 @@ class User(AbstractBaseUser, PermissionsMixin):
     
     def __str__(self):
         return self.email
-    
-class PatientManager(models.Manager):
-    def create_patient(self, user, dob, height, weight, history, allergies):
-        patient = self.model(user=user, dob=dob, height=height, weight=weight, history=history, allergies=allergies)
-        patient.save(using=self._db)
 
 class PatientInformation(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.OneToOneField(User, on_delete=models.CASCADE, default=id, related_name='patient')
-    # name = models.TextField()
+    name = models.TextField()
     dob = models.DateField('Date of Birth')
     height = models.BigIntegerField()
     weight = models.FloatField()
-    history = models.JSONField()
+    history = models.TextField()
     allergies = models.TextField()
     patient_wallet = models.CharField(max_length=255)
-
-    objects = PatientManager()
     
     def __str__(self):
         return self.patient_wallet
     
 
-
-
 class DoctorInformation(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.OneToOneField(User, on_delete=models.CASCADE, default=id, related_name='doctor')
-    # name = models.TextField()
+    name = models.TextField()
     hospital_name = models.TextField()
-    # doctor_wallet = models.CharField(max_length=255)
+    doctor_wallet = models.CharField(max_length=255)
 
     def __str__(self):
         return self.doctor_wallet
-
-    @classmethod
-    def create(cls, user, hospital_name):
-        doctor = cls(user=user, hospital_name=hospital_name)
-        doctor.save(force_insert=True)
-        return doctor
 
 class Prescription(models.Model):
     date =  models.DateField('Date of Prescription')

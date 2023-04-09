@@ -3,10 +3,10 @@ from django.contrib.auth.admin import UserAdmin
 from .models import Prescription, PatientInformation, DoctorInformation, Appointment, User
 
 class PatientAdmin(admin.ModelAdmin):
-    list_display = ('dob', 'height', 'weight', 'history', 'allergies')
+    list_display = ('name', 'dob', 'height', 'weight', 'history', 'allergies', 'patient_wallet')
     
 class DoctorAdmin(admin.ModelAdmin):
-    list_display = ('hospital_name',)
+    list_display = ('name', 'hospital_name', 'doctor_wallet')
     
 class PrescriptionAdmin(admin.ModelAdmin):
     list_display = ('rand_id', 'date', 'diagnosis', 'treatment', 'patient', 'doctor')
@@ -24,7 +24,7 @@ class CustomUserAdmin(UserAdmin):
     ]
     fieldsets = [
         (None, {
-            'fields': ['name', 'email', 'wallet_address', 'is_patient', 'is_doctor', 'is_superuser', 'is_staff']
+            'fields': ['name', 'email', 'wallet_address','is_patient', 'is_doctor', 'is_superuser', 'is_staff']
         },),
     ]
     ordering = ('name',)

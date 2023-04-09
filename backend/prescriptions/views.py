@@ -1,22 +1,18 @@
 from django.shortcuts import render
 from rest_framework import viewsets, status
 from rest_framework.views import APIView
-from rest_framework.generics import CreateAPIView, RetrieveAPIView
-from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from .serializers import PrescriptionSerializer, PatientSerializer, DoctorSerializer, AppointmentSerializer, PatientRegistrationSerializer, DoctorRegistrationSerializer, UserLoginSerializer
 from .models import Prescription, PatientInformation, DoctorInformation, Appointment, User
 # from django.contrib.auth import get_user_model
-from rest_framework.permissions import AllowAny
 # User = get_user_model()
 # Create your views here.
 
 
-class PatientRegistrationView(CreateAPIView):
+class PatientRegistrationView(APIView):
     serializer_class = PatientRegistrationSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [AllowAny, ]
 
     def post(self, request):
 
@@ -28,9 +24,9 @@ class PatientRegistrationView(CreateAPIView):
         return Response(response, status=status.HTTP_201_CREATED)
 
 
-class DoctorRegistrationView(CreateAPIView):
+class DoctorRegistrationView(APIView):
     serializer_class = DoctorRegistrationSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [AllowAny, ]
     
     def post(self,request):
         serializer = self.serializer_class(data=request.data)
@@ -46,62 +42,58 @@ class UserLoginView(APIView):
     permission_classes = (AllowAny,)
     queryset = User.objects.none()
 
-
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         response = {
             'success' : 'True',
             'status code' : status.HTTP_200_OK,
-            'message': 'User logged in  successfully',
+            'message': 'User logged in successfully',
             'token' : serializer.data['token']
             }
         status_code = status.HTTP_200_OK
 
         return Response(response, status=status_code)
 
-class ProfileView(RetrieveAPIView):
-    permission_classes = (IsAuthenticated, )
-    authentication_classes = (TokenAuthentication, )
+class ProfileView(APIView):
 
-    def get(self, request):
-
+    def get(self, request, format=None):
         try:
-            if request.user.is_patient:
-                user = User.objects.get(user=request.user)
-                # username = PatientInformation.objects.get(user=request.user)
+            user = request.user
+            if user.is_patient:
+                #username = User.objects.get(user=user)
                 status_code = status.HTTP_200_OK
-                profile = PatientInformation.objects.get(user=request.user)
+                profile = PatientInformation.objects.get(user=user)
                 response = {
                     'success': 'true',
                     'status': status.HTTP_200_OK,
                     'message': 'Patient Information successfully retrieved',
                     'data': [{
-                        'name': user.name,
+                        'name': profile.name,
                         'dob': profile.dob,
                         'height':profile.height,
                         'weight':profile.weight,
                         'history':profile.history,
                         'allergies': profile.allergies,
-                        'wallet': user.wallet_address
+                        'wallet': profile.patient_wallet
                     }]
                 }
-            if request.user.is_doctor:
-                username = User.objects.get(user=request.user)
+            if user.is_doctor:
+                #username = User.objects.get(user=user)
                 status_code = status.HTTP_200_OK
-                profile = DoctorInformation.objects.get(user=request.user)
+                profile = DoctorInformation.objects.get(user=user)
                 response = {
                     'success': 'true',
                     'status': status.HTTP_200_OK,
                     'message': 'Doctor Information successfully retrieved',
                     'data': [{
-                        'name': username.name,
+                        'name': profile.name,
                         'hospital':profile.hospital_name,
-                        'wallet': username.wallet_address
+                        'wallet': profile.doctor_wallet
                     }]
                 }
-            if request.user.is_superuser:
-                profile = User.objects.get(user = request.user)
+            if user.is_superuser:
+                profile = User.objects.get(user = user)
                 status_code = status.HTTP_200_OK
                 response = {
                     'success': 'true',
