@@ -28,7 +28,6 @@ class UserManager(BaseUserManager):
         user.is_patient = True
         user.save(using=self._db)
         return user
-
     
     def create_superuser(self, name, email, wallet_address, password=None):
         user = self.create_user(name, email, wallet_address, password)
@@ -66,7 +65,7 @@ class PatientInformation(models.Model):
     weight = models.FloatField()
     history = models.TextField()
     allergies = models.TextField()
-    patient_wallet = models.CharField(max_length=255)
+    patient_wallet = models.CharField(max_length=255, unique=True)
     
     def __str__(self):
         return self.patient_wallet
@@ -77,23 +76,30 @@ class DoctorInformation(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, default=id, related_name='doctor')
     name = models.TextField()
     hospital_name = models.TextField()
-    doctor_wallet = models.CharField(max_length=255)
+    doctor_wallet = models.CharField(max_length=255, unique=True)
 
     def __str__(self):
         return self.doctor_wallet
 
 class Prescription(models.Model):
+    randomId = models.BigIntegerField()
     date =  models.DateField('Date of Prescription')
-    patient = models.OneToOneField(PatientInformation, on_delete=models.CASCADE)
-    doctor = models.OneToOneField(DoctorInformation, on_delete=models.CASCADE)
     diagnosis = models.TextField()
     treatment = models.TextField()
-    rand_id = models.BigIntegerField()
+    patient = models.OneToOneField(PatientInformation, on_delete=models.CASCADE)
+    doctor = models.OneToOneField(DoctorInformation, on_delete=models.CASCADE)
+    notes = models.TextField()
+
+    def __str__(self):
+        return self.randomId
 
 class Appointment(models.Model):
     appointment_time = models.DateTimeField('Appointment Time')
-    patient = models.OneToOneField(PatientInformation, on_delete=models.CASCADE)
-    doctor = models.OneToOneField(DoctorInformation, on_delete=models.CASCADE)
+    patient = models.ForeignKey(PatientInformation, on_delete=models.CASCADE)
+    doctor = models.ForeignKey(DoctorInformation, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.patient.patient_wallet + ' has an appointment with ' + self.doctor.doctor_wallet + ' at ' + str(self.appointment_time)
 
 
 

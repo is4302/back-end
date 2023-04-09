@@ -9,7 +9,7 @@ class DoctorAdmin(admin.ModelAdmin):
     list_display = ('name', 'hospital_name', 'doctor_wallet')
     
 class PrescriptionAdmin(admin.ModelAdmin):
-    list_display = ('rand_id', 'date', 'diagnosis', 'treatment', 'patient', 'doctor')
+    list_display = ('randomId', 'date', 'diagnosis', 'treatment', 'patient', 'doctor', 'notes')
 
 class ApptAdmin(admin.ModelAdmin):
     list_display = ('appointment_time', 'patient', 'doctor')

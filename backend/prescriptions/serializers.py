@@ -67,7 +67,6 @@ class UserLoginSerializer(serializers.Serializer):
     is_patient = serializers.BooleanField(read_only=True, allow_null=True)
     is_doctor = serializers.BooleanField(read_only=True, allow_null=True)
 
-
     def validate(self, data):
         email = data.get("email")
         password = data.get("password")
@@ -83,6 +82,24 @@ class UserLoginSerializer(serializers.Serializer):
         
         return {'name': user.name, 'email': user.email, 'wallet': user.wallet_address, 'token':refresh.access_token}
 
+class AppointmentCreationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Appointment
+        fields = ['appointment_time', 'patient', 'doctor']
+    
+    patient = serializers.SlugRelatedField(slug_field='patient_wallet', queryset=PatientInformation.objects.all())
+    doctor = serializers.SlugRelatedField(slug_field='doctor_wallet', queryset=DoctorInformation.objects.all())
+
+    def create(self, data):
+        return Appointment.objects.create(**data)
+
+class PrescriptionCreationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Prescription
+        fields = ['randomId', 'date', 'diagnosis', 'treatment', 'patient', 'doctor', 'notes']
+    
+    patient = serializers.SlugRelatedField(slug_field='patient_wallet', queryset=PatientInformation.objects.all())
+    doctor = serializers.SlugRelatedField(slug_field='doctor_wallet', queryset=DoctorInformation.objects.all())
 
 class PrescriptionSerializer(serializers.ModelSerializer):
     class Meta:
@@ -93,3 +110,4 @@ class AppointmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Appointment
         fields = '__all__'
+

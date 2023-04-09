@@ -20,13 +20,8 @@ from prescriptions import views
 from prescriptions.views import *
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
 
-router = routers.DefaultRouter()
-router.register(r'prescriptions', views.PrescriptionView, 'prescription')
-router.register(r'appointments', views.AppointmentView, 'appt')
-
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("api/", include(router.urls)),
     path('api/token/', TokenObtainPairView.as_view()),
     path('api/token/refresh/', TokenRefreshView.as_view()),
     path('api/token/verify/', TokenVerifyView.as_view()),
@@ -34,5 +29,7 @@ urlpatterns = [
     path("api/signup/doctor", DoctorRegistrationView.as_view(), name='doctor_signup'),
     path("api/login", UserLoginView.as_view()),
     path("api/profile", ProfileView.as_view()),
+    path("api/appointment", AppointmentView.as_view()),
+    path("api/prescription", PrescriptionView.as_view())
 ]
 
