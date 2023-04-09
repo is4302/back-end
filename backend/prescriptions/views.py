@@ -49,7 +49,9 @@ class UserLoginView(APIView):
             'success' : 'True',
             'status code' : status.HTTP_200_OK,
             'message': 'User logged in successfully',
-            'token' : serializer.data['token']
+            'token' : serializer.data['token'],
+            'is_doctor' : serializer.data['is_doctor'],
+            'is_patient' : serializer.data['is_patient']
             }
         status_code = status.HTTP_200_OK
 

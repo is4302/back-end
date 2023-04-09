@@ -81,7 +81,7 @@ class UserLoginSerializer(serializers.Serializer):
         except User.DoesNotExist:
             raise serializers.ValidationError("User does not exist")
         
-        return {'name': user.name, 'email': user.email, 'wallet': user.wallet_address, 'token':refresh.access_token}
+        return {'name': user.name, 'email': user.email, 'wallet': user.wallet_address, 'token':refresh.access_token, 'is_patient': user.is_patient, 'is_doctor': user.is_doctor}
 
 
 class PrescriptionSerializer(serializers.ModelSerializer):
