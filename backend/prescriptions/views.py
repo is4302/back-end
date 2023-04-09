@@ -156,8 +156,11 @@ class AppointmentView(APIView):
                 status_code = status.HTTP_200_OK
                 profile = DoctorInformation.objects.get(user=user)
                 appt = Appointment.objects.filter(doctor__doctor_wallet=profile.doctor_wallet)
-                serialized = AppointmentSerializer(data=appt.data, many=True)
-                return Response(serialized.data, status=status_code)
+                serialized = AppointmentSerializer(data=appt, many=True)
+                if serialized.is_valid():
+                    return Response(serialized.data, status=status_code)
+                else:
+                    return Response("Disallowed", status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             status_code = status.HTTP_400_BAD_REQUEST
             response = {
