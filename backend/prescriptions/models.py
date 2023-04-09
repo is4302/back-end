@@ -16,19 +16,22 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
     
-    def create_doctor(self, name, email, wallet_address, password=None):
-        user = self.create_user(name, email, wallet_address, password)
+
+
+    def create_doctor(self, email, name, wallet_address, password=None, **extra_fields):
+        user = self.create_user(email=email, name=name, wallet_address=wallet_address, password=password, **extra_fields)
         user.is_doctor = True
-        user.save(using=self._db)
-        #doctor_profile = DoctorInformation(user=user, hospital_name=hospital_name)
-        #doctor_profile.save(using=self._db)
-    
+        user.is_active = True
+        user.save()
+        return user
+
+
     def create_patient(self, name, email, wallet_address, password=None):
         user = self.create_user(name, email, wallet_address, password)
         user.is_patient = True
         user.save(using=self._db)
-        #patient_profile = PatientInformation(user=user, dob=dob, height=height, weight=weight, history=history, allergies=allergies)
-        #patient_profile.save(using=self._db)
+        return user
+
     
     def create_superuser(self, name, email, wallet_address, password=None):
         user = self.create_user(name, email, wallet_address, password)
@@ -71,7 +74,7 @@ class PatientInformation(models.Model):
     weight = models.FloatField()
     history = models.JSONField()
     allergies = models.TextField()
-    # patient_wallet = models.CharField(max_length=255)
+    patient_wallet = models.CharField(max_length=255)
 
     objects = PatientManager()
     

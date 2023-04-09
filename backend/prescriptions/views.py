@@ -15,15 +15,15 @@ from rest_framework.permissions import AllowAny
 
 
 class PatientRegistrationView(CreateAPIView):
-
     serializer_class = PatientRegistrationSerializer
     permission_classes = [AllowAny]
-    
-    def post(self,request):
+
+    def post(self, request):
+
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             serializer.save()
-        
+
         response = {'success': 'True', 'message': 'Patient registered'}
         return Response(response, status=status.HTTP_201_CREATED)
 

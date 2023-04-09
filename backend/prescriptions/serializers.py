@@ -31,7 +31,7 @@ class PatientRegistrationSerializer(serializers.ModelSerializer):
     def create(self, data):
         profile_data = data.pop('profile')
         user = User.objects.create_patient(**data)
-        PatientInformation.objects.create_patient(
+        PatientInformation.objects.create(
             user = user,
             dob = profile_data['dob'],
             height = profile_data['height'],
@@ -51,7 +51,7 @@ class DoctorRegistrationSerializer(serializers.ModelSerializer):
     def create(self, data):
         profile_data = data.pop('profile')
         user = User.objects.create_doctor(**data)
-        DoctorInformation.create(
+        DoctorInformation.objects.create(
             user = user,
             hospital_name = profile_data['hospital_name']
         )
