@@ -64,6 +64,8 @@ class UserLoginSerializer(serializers.Serializer):
     email = serializers.CharField()
     password = serializers.CharField(write_only=True)
     token = serializers.CharField(allow_blank=True, read_only=True)
+    is_patient = serializers.BooleanField(read_only=True, allow_null=True)
+    is_doctor = serializers.BooleanField(read_only=True, allow_null=True)
 
 
     def validate(self, data):
