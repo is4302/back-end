@@ -62,6 +62,8 @@ class UserLoginSerializer(serializers.Serializer):
     email = serializers.CharField()
     password = serializers.CharField(write_only=True)
     token = serializers.CharField(allow_blank=True, read_only=True)
+    is_patient = serializers.BooleanField(read_only=True, allow_null=True)
+    is_doctor = serializers.BooleanField(read_only=True, allow_null=True)
 
 
     def validate(self, data):
@@ -78,7 +80,7 @@ class UserLoginSerializer(serializers.Serializer):
         except User.DoesNotExist:
             raise serializers.ValidationError("User does not exist")
         
-        return {'name': user.name, 'email': user.email, 'wallet': user.wallet_address, 'token': token}
+        return {'name': user.name, 'email': user.email, 'wallet': user.wallet_address, 'is_patient': user.is_patient, 'is_doctor': user.is_doctor, 'token': token}
 
 
 
