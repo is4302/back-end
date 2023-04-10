@@ -132,7 +132,7 @@ class PrescriptionView(APIView):
 class AppointmentView(APIView):
     serializer_class = AppointmentCreationSerializer
     queryset = Appointment.objects.all()
-    permission_classes = (AllowAny,)
+    permission_classes = (IsAuthenticated,)
 
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
@@ -151,7 +151,8 @@ class AppointmentView(APIView):
                 status_code = status.HTTP_200_OK
                 profile = PatientInformation.objects.get(user=user)
                 appt = Appointment.objects.filter(patient__patient_wallet=profile.patient_wallet)
-                serialized = AppointmentSerializer(data=appt.data, many=True)
+                serialized = AppointmentSerializer(data=appt, many=True)
+                serialized.is_valid()
                 return Response(serialized.data, status=status_code)
             if user.is_doctor:
                 status_code = status.HTTP_200_OK
