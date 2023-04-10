@@ -217,7 +217,7 @@ class AppointmentGetDoctorView(APIView):
     permission_classes = (AllowAny, )
 
     def get(self, request):
-        doctor = request.data.get("doctor_wallet")
+        doctor = request.query_params.get("doctor_wallet")
         queryset_list = Appointment.objects.filter(doctor__doctor_wallet=doctor)
         if queryset_list:
             serialized = AppointmentSerializer(data=queryset_list, many=True)
