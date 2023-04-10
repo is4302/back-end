@@ -96,7 +96,10 @@ class AppointmentCreationSerializer(serializers.ModelSerializer):
 class PrescriptionCreationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Prescription
-        fields = ['randomId', 'date', 'diagnosis', 'treatment', 'patient', 'doctor', 'notes']
+        fields = ['date', 'diagnosis', 'treatment', 'patient', 'doctor', 'notes']
+        extra_kwargs = {
+            'notes': {'required': False},
+        }
     
     patient = serializers.SlugRelatedField(slug_field='patient_wallet', queryset=PatientInformation.objects.all())
     doctor = serializers.SlugRelatedField(slug_field='doctor_wallet', queryset=DoctorInformation.objects.all())

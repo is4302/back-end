@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from .serializers import PrescriptionSerializer, PatientSerializer, DoctorSerializer, AppointmentSerializer
-from .serializers import PatientRegistrationSerializer, DoctorRegistrationSerializer, UserLoginSerializer, AppointmentCreationSerializer
+from .serializers import PatientRegistrationSerializer, DoctorRegistrationSerializer, UserLoginSerializer, AppointmentCreationSerializer, PrescriptionCreationSerializer
 from .models import Prescription, PatientInformation, DoctorInformation, Appointment, User
 # from django.contrib.auth import get_user_model
 # User = get_user_model()
@@ -121,15 +121,18 @@ class ProfileView(APIView):
         return Response(response, status=status_code)
     
 class PrescriptionView(APIView):
-    serializer_class = PrescriptionSerializer
+    serializer_classes = (PrescriptionCreationSerializer, PrescriptionSerializer)
     queryset = Prescription.objects.all()
     permission_classes = (IsAuthenticated, )
 
     def post(self, request):
         user = request.user
         if user.is_doctor:
-            serializer = self.serializer_class(data=request.data)
+            serializer = self.serializer_classes[0](data=request.data)
             serializer.is_valid(raise_exception=True)
+            if serializer.validated_data['doctor'].user != request.user:
+                response = {'success': 'false', 'message': 'You cannot prescribe medicine on behalf of other doctor'}
+                return Response(response, status=status.HTTP_403_FORBIDDEN)
             serializer.save()
             response = {'success': 'true','message': 'Medicine prescribed'}
             status_code = status.HTTP_200_OK
@@ -145,7 +148,7 @@ class PrescriptionView(APIView):
                 status_code = status.HTTP_200_OK
                 profile = PatientInformation.objects.get(user=user)
                 appt = Prescription.objects.filter(patient__patient_wallet=profile.patient_wallet)
-                serialized = PrescriptionSerializer(data=appt, many=True)
+                serialized = self.serializer_classes[1](data=appt, many=True)
                 if serialized.is_valid():
                     return Response(serialized.data, status=status_code)
                 else:
@@ -154,7 +157,7 @@ class PrescriptionView(APIView):
                 status_code = status.HTTP_200_OK
                 profile = DoctorInformation.objects.get(user=user)
                 appt = Prescription.objects.filter(doctor__doctor_wallet=profile.doctor_wallet)
-                serialized = PrescriptionSerializer(data=appt, many=True)
+                serialized = self.serializer_classes[1](data=appt, many=True)
                 if serialized.is_valid():
                     return Response(serialized.data, status=status_code)
                 else:
