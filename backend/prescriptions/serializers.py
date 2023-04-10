@@ -101,6 +101,9 @@ class PrescriptionCreationSerializer(serializers.ModelSerializer):
     patient = serializers.SlugRelatedField(slug_field='patient_wallet', queryset=PatientInformation.objects.all())
     doctor = serializers.SlugRelatedField(slug_field='doctor_wallet', queryset=DoctorInformation.objects.all())
 
+    def create(self, data):
+        return Prescription.objects.create(**data)
+
 class PrescriptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Prescription

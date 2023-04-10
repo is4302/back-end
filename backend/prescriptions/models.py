@@ -86,8 +86,8 @@ class Prescription(models.Model):
     date =  models.DateField('Date of Prescription')
     diagnosis = models.TextField()
     treatment = models.TextField()
-    patient = models.OneToOneField(PatientInformation, on_delete=models.CASCADE)
-    doctor = models.OneToOneField(DoctorInformation, on_delete=models.CASCADE)
+    patient = models.ForeignKey(PatientInformation, on_delete=models.CASCADE)
+    doctor = models.ForeignKey(DoctorInformation, on_delete=models.CASCADE)
     notes = models.TextField()
 
     def __str__(self):
