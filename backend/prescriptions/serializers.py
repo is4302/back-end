@@ -12,13 +12,18 @@ class UserSerializer(serializers.ModelSerializer):
 class PatientSerializer(serializers.ModelSerializer):
     class Meta:
         model = PatientInformation
-        fields = '__all__'
+        fields = ('patient_wallet',)
+
+        def patient_wallet(self, obj):
+            return obj.patient_wallet
 
 class DoctorSerializer(serializers.ModelSerializer):
     class Meta:
         model = DoctorInformation
-        fields = '__all__'
+        fields = ('doctor_wallet',)
 
+        def doctor_wallet(self, obj):
+            return obj.doctor_wallet
 class PatientRegistrationSerializer(serializers.ModelSerializer):
     profile = PatientSerializer(required=False)
 
@@ -108,12 +113,16 @@ class PrescriptionCreationSerializer(serializers.ModelSerializer):
         return Prescription.objects.create(**data)
 
 class PrescriptionSerializer(serializers.ModelSerializer):
+    patient = serializers.CharField(source='patient.patient_wallet')
+    doctor = serializers.CharField(source='doctor.doctor_wallet')
     class Meta:
         model = Prescription
-        fields = '__all__'
+        fields = ('randomId', 'date', 'diagnosis', 'treatment', 'patient', 'doctor', 'notes')
 
 class AppointmentSerializer(serializers.ModelSerializer):
+    patient = serializers.CharField(source='patient.patient_wallet')
+    doctor = serializers.CharField(source='doctor.doctor_wallet')
     class Meta:
         model = Appointment
-        fields = '__all__'
+        fields = ('appointment_time', 'patient', 'doctor')
 
