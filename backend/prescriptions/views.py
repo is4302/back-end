@@ -18,7 +18,7 @@ class PatientRegistrationView(APIView):
     def post(self, request):
 
         serializer = self.serializer_class(data=request.data)
-        if serializer.is_valid():
+        if serializer.is_valid(raise_exception=True):
             serializer.save()
 
         response = {'success': 'True', 'message': 'Patient registered'}
@@ -31,7 +31,7 @@ class DoctorRegistrationView(APIView):
     
     def post(self,request):
         serializer = self.serializer_class(data=request.data)
-        if serializer.is_valid():
+        if serializer.is_valid(raise_exception=True):
             serializer.save()
         
         response = {'success': 'True', 'message': 'Doctor registered'}
@@ -137,6 +137,7 @@ class AppointmentView(APIView):
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
+        serializer.save()
         response = {'success': 'true','message': 'Appointment set'}
         status_code = status.HTTP_200_OK
 
