@@ -30,6 +30,7 @@ urlpatterns = [
     path("api/login", UserLoginView.as_view()),
     path("api/profile", ProfileView.as_view()),
     path("api/appointment", AppointmentView.as_view()),
+    path("api/appointment/doctor", AppointmentGetDoctorView.as_view()),
     path("api/prescription", PrescriptionView.as_view())
 ]
 

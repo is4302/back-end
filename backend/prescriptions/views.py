@@ -173,3 +173,17 @@ class AppointmentView(APIView):
             }
 
         return Response(response, status=status_code)
+
+class AppointmentGetDoctorView(APIView):
+    queryset = Appointment.objects.all()
+    permission_classes = (AllowAny, )
+
+    def get(self, request):
+        doctor = request.data.get("doctor_wallet")
+        queryset_list = Appointment.objects.filter(doctor__doctor_wallet=doctor)
+        if queryset_list:
+            serialized = AppointmentSerializer(data=queryset_list, many=True)
+            serialized.is_valid()
+            return Response(serialized.data, status=status.HTTP_200_OK)
+        else:
+            return Response("No appointments found for doctor", status=status.HTTP_204_NO_CONTENT)
