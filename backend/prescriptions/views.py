@@ -19,6 +19,7 @@ class PatientRegistrationView(APIView):
 
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid(raise_exception=True):
+
             serializer.save()
 
         response = {'success': 'True', 'message': 'Patient registered'}
@@ -145,8 +146,10 @@ class PrescriptionView(APIView):
                 profile = PatientInformation.objects.get(user=user)
                 appt = Prescription.objects.filter(patient__patient_wallet=profile.patient_wallet)
                 serialized = PrescriptionSerializer(data=appt, many=True)
-                serialized.is_valid()
-                return Response(serialized.data, status=status_code)
+                if serialized.is_valid():
+                    return Response(serialized.data, status=status_code)
+                else:
+                    return Response("No prescriptions available for current patient", status=status.HTTP_204_NO_CONTENT)
             if user.is_doctor:
                 status_code = status.HTTP_200_OK
                 profile = DoctorInformation.objects.get(user=user)
@@ -155,7 +158,7 @@ class PrescriptionView(APIView):
                 if serialized.is_valid():
                     return Response(serialized.data, status=status_code)
                 else:
-                    return Response("Disallowed", status=status.HTTP_400_BAD_REQUEST)
+                    return Response("No prescriptions available for current doctor", status=status.HTTP_204_NO_CONTENT)
 
         except Exception as e:
             status_code = status.HTTP_400_BAD_REQUEST
@@ -175,6 +178,8 @@ class AppointmentView(APIView):
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
+        if (serializer.validated_data['patient'].user != request.user) and (serializer.validated_data['doctor'].user != request.user):
+            return Response({'success': 'false', 'message': 'You cannot create an appointment for someone else'}, status=status.HTTP_403_FORBIDDEN)
         serializer.save()
         response = {'success': 'true','message': 'Appointment set'}
         status_code = status.HTTP_200_OK
@@ -190,8 +195,10 @@ class AppointmentView(APIView):
                 profile = PatientInformation.objects.get(user=user)
                 appt = Appointment.objects.filter(patient__patient_wallet=profile.patient_wallet)
                 serialized = AppointmentSerializer(data=appt, many=True)
-                serialized.is_valid()
-                return Response(serialized.data, status=status_code)
+                if serialized.is_valid():
+                    return Response(serialized.data, status=status_code)
+                else:
+                    return Response("No appointments for current user", status=status.HTTP_204_NO_CONTENT)
             if user.is_doctor:
                 status_code = status.HTTP_200_OK
                 profile = DoctorInformation.objects.get(user=user)
@@ -200,7 +207,7 @@ class AppointmentView(APIView):
                 if serialized.is_valid():
                     return Response(serialized.data, status=status_code)
                 else:
-                    return Response("Disallowed", status=status.HTTP_400_BAD_REQUEST)
+                    return Response("No appointments for current user", status=status.HTTP_204_NO_CONTENT)
         except Exception as e:
             status_code = status.HTTP_400_BAD_REQUEST
             response = {
