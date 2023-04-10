@@ -148,20 +148,15 @@ class PrescriptionView(APIView):
                 status_code = status.HTTP_200_OK
                 profile = PatientInformation.objects.get(user=user)
                 appt = Prescription.objects.filter(patient__patient_wallet=profile.patient_wallet)
-                serialized = self.serializer_classes[1](data=appt, many=True)
-                if serialized.is_valid():
-                    return Response(serialized.data, status=status_code)
-                else:
-                    return Response("No prescriptions available for current patient", status=status.HTTP_204_NO_CONTENT)
+                serialized = self.serializer_classes[1](list(appt), many=True)
+                return Response(serialized.data, status=status_code)
             if user.is_doctor:
                 status_code = status.HTTP_200_OK
                 profile = DoctorInformation.objects.get(user=user)
                 appt = Prescription.objects.filter(doctor__doctor_wallet=profile.doctor_wallet)
                 serialized = self.serializer_classes[1](data=appt, many=True)
-                if serialized.is_valid():
-                    return Response(serialized.data, status=status_code)
-                else:
-                    return Response("No prescriptions available for current doctor", status=status.HTTP_204_NO_CONTENT)
+                return Response(serialized.data, status=status_code)
+
 
         except Exception as e:
             status_code = status.HTTP_400_BAD_REQUEST
@@ -196,27 +191,23 @@ class AppointmentView(APIView):
             if user.is_patient:
                 status_code = status.HTTP_200_OK
                 profile = PatientInformation.objects.get(user=user)
-                appt = Appointment.objects.filter(patient__patient_wallet=profile.patient_wallet)
-                serialized = AppointmentSerializer(data=appt, many=True)
-                if serialized.is_valid():
-                    return Response(serialized.data, status=status_code)
-                else:
-                    return Response("No appointments for current user", status=status.HTTP_204_NO_CONTENT)
+                appt = Appointment.objects.filter(patient=profile)
+                serialized = AppointmentSerializer(list(appt), many=True)
+                # if serialized.is_valid(raise_exception=True):
+                return Response(serialized.data, status=status_code)
             if user.is_doctor:
                 status_code = status.HTTP_200_OK
                 profile = DoctorInformation.objects.get(user=user)
-                appt = Appointment.objects.filter(doctor__doctor_wallet=profile.doctor_wallet)
-                serialized = AppointmentSerializer(data=appt, many=True)
-                if serialized.is_valid():
-                    return Response(serialized.data, status=status_code)
-                else:
-                    return Response("No appointments for current user", status=status.HTTP_204_NO_CONTENT)
+                appt = Appointment.objects.filter(doctor=profile)
+                serialized = AppointmentSerializer(list(appt), many=True)
+                # if serialized.is_valid():
+                return Response(serialized.data, status=status_code)
         except Exception as e:
             status_code = status.HTTP_400_BAD_REQUEST
             response = {
                 'success':'false',
                 'status':status.HTTP_400_BAD_REQUEST,
-                'message':'User not found',
+                'message':'Error occured',
                 'error': str(e)
             }
 
