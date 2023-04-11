@@ -242,3 +242,20 @@ class AppointmentGetDoctorView(APIView):
             response = {'success': 'false',
                         'message': 'No appointments found for doctor'}
             return Response(response, status=status.HTTP_204_NO_CONTENT)
+
+class GetDoctorView(APIView):
+    queryset = DoctorInformation.objects.all()
+    permission_classes = (IsAuthenticated, )
+
+    def get(self, request):
+        query_list = DoctorInformation.objects.all()
+        if query_list:
+            serialized = DoctorSerializer(data=query_list, many=True)
+            serialized.is_valid()
+            return Response(serialized.data, status=status.HTTP_200_OK)
+        else:
+            response = {
+                'success': 'false',
+                'message': 'No doctors registered on this platform'
+            }
+            return Response(response, status=status.HTTP_204_NO_CONTENT)
