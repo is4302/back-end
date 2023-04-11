@@ -238,8 +238,7 @@ class AppointmentGetDoctorView(APIView):
             serialized.is_valid()
             return Response(serialized.data, status=status.HTTP_200_OK)
         else:
-            response = []
-            return Response(response, status=status.HTTP_204_NO_CONTENT)
+            return Response([], status=status.HTTP_200_OK)
 
 class GetDoctorView(APIView):
     queryset = DoctorInformation.objects.all()
