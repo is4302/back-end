@@ -20,7 +20,7 @@ class PatientSerializer(serializers.ModelSerializer):
 class DoctorSerializer(serializers.ModelSerializer):
     class Meta:
         model = DoctorInformation
-        fields = ('doctor_wallet',)
+        fields = ('hospital_name', 'name', 'doctor_wallet')
 
         def doctor_wallet(self, obj):
             return obj.doctor_wallet
