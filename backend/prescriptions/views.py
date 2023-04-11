@@ -167,7 +167,7 @@ class PrescriptionView(APIView):
                 profile = DoctorInformation.objects.get(user=user)
                 appt = Prescription.objects.filter(
                     doctor__doctor_wallet=profile.doctor_wallet)
-                serialized = self.serializer_classes[1](data=appt, many=True)
+                serialized = self.serializer_classes[1](list(appt), many=True)
                 return Response(serialized.data, status=status_code)
 
         except Exception as e:
@@ -205,14 +205,12 @@ class AppointmentView(APIView):
                 profile = PatientInformation.objects.get(user=user)
                 appt = Appointment.objects.filter(patient=profile)
                 serialized = AppointmentSerializer(list(appt), many=True)
-                # if serialized.is_valid(raise_exception=True):
                 return Response(serialized.data, status=status_code)
             if user.is_doctor:
                 status_code = status.HTTP_200_OK
                 profile = DoctorInformation.objects.get(user=user)
                 appt = Appointment.objects.filter(doctor=profile)
                 serialized = AppointmentSerializer(list(appt), many=True)
-                # if serialized.is_valid():
                 return Response(serialized.data, status=status_code)
         except Exception as e:
             status_code = status.HTTP_400_BAD_REQUEST
@@ -233,12 +231,8 @@ class AppointmentGetDoctorView(APIView):
         doctor = request.query_params.get("doctor_wallet")
         queryset_list = Appointment.objects.filter(
             doctor__doctor_wallet=doctor)
-        if queryset_list:
-            serialized = AppointmentSerializer(data=queryset_list, many=True)
-            serialized.is_valid()
-            return Response(serialized.data, status=status.HTTP_200_OK)
-        else:
-            return Response([], status=status.HTTP_200_OK)
+        serialized = AppointmentSerializer(list(queryset_list), many=True)
+        return Response(serialized.data, status=status.HTTP_200_OK)
 
 class GetDoctorView(APIView):
     queryset = DoctorInformation.objects.all()
@@ -246,13 +240,5 @@ class GetDoctorView(APIView):
 
     def get(self, request):
         query_list = DoctorInformation.objects.all()
-        if query_list:
-            serialized = DoctorSerializer(data=query_list, many=True)
-            serialized.is_valid()
-            return Response(serialized.data, status=status.HTTP_200_OK)
-        else:
-            response = {
-                'success': 'false',
-                'message': 'No doctors registered on this platform'
-            }
-            return Response(response, status=status.HTTP_204_NO_CONTENT)
+        serialized = DoctorSerializer(list(query_list), many=True)
+        return Response(serialized.data, status=status.HTTP_200_OK)
