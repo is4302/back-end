@@ -24,6 +24,7 @@ class DoctorSerializer(serializers.ModelSerializer):
 
         def doctor_wallet(self, obj):
             return obj.doctor_wallet
+        
 class PatientRegistrationSerializer(serializers.ModelSerializer):
     profile = PatientSerializer(required=False)
 
@@ -88,7 +89,8 @@ class UserLoginSerializer(serializers.Serializer):
         except User.DoesNotExist:
             raise serializers.ValidationError("User does not exist")
         
-        return {'name': user.name, 'email': user.email, 'wallet': user.wallet_address, 'token':refresh.access_token, 'is_patient': user.is_patient, 'is_doctor': user.is_doctor}
+        return {'name': user.name, 'email': user.email, 'wallet': user.wallet_address, 'token':refresh.access_token, 
+                'is_patient': user.is_patient, 'is_doctor': user.is_doctor}
 
 class AppointmentCreationSerializer(serializers.ModelSerializer):
     class Meta:

@@ -225,7 +225,6 @@ class AppointmentView(APIView):
 
         return Response(response, status=status_code)
 
-
 class AppointmentGetDoctorView(APIView):
     queryset = Appointment.objects.all()
     permission_classes = (AllowAny, )
@@ -239,8 +238,7 @@ class AppointmentGetDoctorView(APIView):
             serialized.is_valid()
             return Response(serialized.data, status=status.HTTP_200_OK)
         else:
-            response = {'success': 'false',
-                        'message': 'No appointments found for doctor'}
+            response = []
             return Response(response, status=status.HTTP_204_NO_CONTENT)
 
 class GetDoctorView(APIView):
