@@ -12,7 +12,7 @@ class UserSerializer(serializers.ModelSerializer):
 class PatientSerializer(serializers.ModelSerializer):
     class Meta:
         model = PatientInformation
-        fields = ('patient_wallet',)
+        fields = ("dob", "height", "weight", "history", "allergies", "name", "patient_wallet")
 
         def patient_wallet(self, obj):
             return obj.patient_wallet
@@ -32,11 +32,14 @@ class PatientRegistrationSerializer(serializers.ModelSerializer):
         fields = ('name', 'email', 'wallet_address', 'password', 'profile')
 
     def create(self, data):
+        print(data)
+        print(data['profile'])
         profile_data = data.pop('profile')
+
         user = User.objects.create_patient(**data)
         PatientInformation.objects.create(
             user = user,
-            name=profile_data['name'],
+            name=data['name'],
             dob = profile_data['dob'],
             height = profile_data['height'],
             weight = profile_data['weight'],
