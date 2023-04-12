@@ -11,7 +11,7 @@ A blockchain-based technique for patients and doctors to manage their medical re
 2. Install all required packages through `pip install -r requirements.txt`
 3. Enter the backend folder to start the server using `cd backend` if you are not in the `/backend` folder.
 4. If you are setting up for the first time, run `python manage.py makemigrations` then `python manage.py migrate`
-5. To manage the accounts that are added to the database, run `python manage.py createsuperuser` and follow the instructions there.
+5. To manage the accounts that are added to the database, run `python manage.py createsuperuser` and follow the instructions shown in the terminal.
 6. To start up the server, run `python manage.py runserver`. The server will be deployed on your local host at either: `http://127.0.0.1:8000/` or `http://localhost:8000`
 
 ### Pages
