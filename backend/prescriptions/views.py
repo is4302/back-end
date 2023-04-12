@@ -164,12 +164,17 @@ class PrescriptionView(APIView):
                 return Response(serialized.data, status=status_code)
             if user.is_doctor:
                 status_code = status.HTTP_200_OK
-                profile = DoctorInformation.objects.get(user=user)
-                appt = Prescription.objects.filter(
+                if len(request.GET.keys()) == 0:
+                    profile = DoctorInformation.objects.get(user=user)
+                    appt = Prescription.objects.filter(
                     doctor__doctor_wallet=profile.doctor_wallet)
-                serialized = self.serializer_classes[1](list(appt), many=True)
-                return Response(serialized.data, status=status_code)
-
+                    serialized = self.serializer_classes[1](list(appt), many=True)
+                    return Response(serialized.data, status=status_code)
+                else:
+                    patient = request.query_params.get("patient_wallet")
+                    queryset_list = Prescription.objects.filter(patient__patient_wallet=patient)
+                    serialized = self.serializer_classes[1](list(queryset_list), many=True)
+                    return Response(serialized.data, status=status_code)
         except Exception as e:
             status_code = status.HTTP_400_BAD_REQUEST
             response = {
@@ -242,3 +247,31 @@ class GetDoctorView(APIView):
         query_list = DoctorInformation.objects.all()
         serialized = DoctorSerializer(list(query_list), many=True)
         return Response(serialized.data, status=status.HTTP_200_OK)
+    
+class GetPatientView(APIView):
+    queryset = PatientInformation.objects.all()
+    permission_classes = (IsAuthenticated, )
+    
+    def get(self, request):
+        try:
+            user = request.user
+            if user.is_doctor:
+                query_list = PatientInformation.objects.all()
+                serialized = PatientSerializer(list(query_list), many=True)
+                return Response(serialized.data, status=status.HTTP_200_OK)
+            else:
+                response = {
+                    'success': 'false',
+                    'message': 'No permission to view other patients'
+                }
+                return Response(response, status=status.HTTP_403_FORBIDDEN)
+        except Exception as e:
+            status_code = status.HTTP_400_BAD_REQUEST
+            response = {
+                'success': 'false',
+                'status': status.HTTP_400_BAD_REQUEST,
+                'message': 'Error occured',
+                'error': str(e)
+            }
+
+        return Response(response, status=status_code)
