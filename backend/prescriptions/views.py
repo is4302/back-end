@@ -256,8 +256,9 @@ class GetPatientView(APIView):
         try:
             user = request.user
             if user.is_doctor:
-                query_list = PatientInformation.objects.all()
-                serialized = PatientSerializer(list(query_list), many=True)
+                wallet = request.query_params.get("patient_wallet")
+                query = PatientInformation.objects.get(patient_wallet=wallet)
+                serialized = PatientSerializer(query)
                 return Response(serialized.data, status=status.HTTP_200_OK)
             else:
                 response = {

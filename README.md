@@ -26,6 +26,7 @@ Append the URL behind `http://127.0.0.1:8000/` or `http://localhost:8000`:
 | Profile Page                | `api/profile`           | GET       | Requires Login |
 | Appointments page           | `api/appointment`       | POST, GET | Requires Login |
 | Prescription Page           | `api/prescription`      | POST, GET | Requires Login |
-| List Doctors on platform    | `api/appointment/doctor`| GET       | Requires Login |
-| List available Appointments | `api/list/doctor`       | GET       | Requires Login |
+| List available Appointments    | `api/appointment/doctor`| GET       | Requires Login |
+| List doctor on platform | `api/list/doctor`       | GET       | Requires Login |
+| Retrieve patient details by wallet | `api/list/patient` | GET | Requires Login, Doctor Only |
 
