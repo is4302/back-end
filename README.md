@@ -18,7 +18,7 @@ A blockchain-based technique for patients and doctors to manage their medical re
 Append the URL behind `http://127.0.0.1:8000/` or `http://localhost:8000`:
 
 | Purpose                     | URL                     | Method    |Notes |
-| --------------------------- |:---------------------- :| :--------:|---------------:|
+| --------------------------- |----------------------|--------|---------------|
 | Database Administration     | `admin`                 | NA        | NA             |
 | Patient Signup              | `api/signup/patient`    | POST      | NA             |
 | Doctor signup               | `api/signup/doctor`     | POST      | NA             |
