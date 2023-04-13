@@ -77,7 +77,7 @@ class UserLoginSerializer(serializers.Serializer):
     is_doctor = serializers.BooleanField(read_only=True, allow_null=True)
 
     def validate(self, data):
-        email = data.get("email")
+        email = data.get("email").lower()
         password = data.get("password")
         user = authenticate(email=email, password=password)
 
