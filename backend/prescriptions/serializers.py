@@ -3,7 +3,6 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
 from .models import Prescription, PatientInformation, DoctorInformation, Appointment, User
 
-
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User

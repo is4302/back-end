@@ -1,14 +1,11 @@
 from django.shortcuts import render
-from rest_framework import viewsets, status
+from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from .serializers import PrescriptionSerializer, PatientSerializer, DoctorSerializer, AppointmentSerializer
 from .serializers import PatientRegistrationSerializer, DoctorRegistrationSerializer, UserLoginSerializer, AppointmentCreationSerializer, PrescriptionCreationSerializer
 from .models import Prescription, PatientInformation, DoctorInformation, Appointment, User
-# from django.contrib.auth import get_user_model
-# User = get_user_model()
-# Create your views here.
 import traceback
 
 
@@ -72,7 +69,6 @@ class ProfileView(APIView):
         try:
             user = request.user
             if user.is_patient:
-                #username = User.objects.get(user=user)
                 status_code = status.HTTP_200_OK
                 profile = PatientInformation.objects.get(user=user)
                 response = {
@@ -90,7 +86,6 @@ class ProfileView(APIView):
                     }]
                 }
             if user.is_doctor:
-                #username = User.objects.get(user=user)
                 status_code = status.HTTP_200_OK
                 profile = DoctorInformation.objects.get(user=user)
                 response = {
